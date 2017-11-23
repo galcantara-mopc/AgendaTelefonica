@@ -1,0 +1,124 @@
+﻿
+@{
+    ViewBag.Title = "RegistrarPersona";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2>Registrar Persona</h2>
+
+<div id="app" class="container ">
+    <form id="" enctype="multipart/form-data" >
+        <div class="row">
+            <div class="col-sm-6 form-group">
+                <label>Cédula:</label>
+                <input  id="cedula" v-model="Persona.Cedula" type="text" class="form-control" placeholder="Instroduzca  la Cédula." maxlength="11" autofocus>
+                <p class="text-danger" v-if="!Persona.Cedula">Requerido</p>
+
+            </div>
+            <div class="col-sm-6 form-group">
+                <label>Nombre:</label>
+                <input v-model="Persona.Nombre" type="text" class="form-control" placeholder="Instroduzca  el nombre." maxlength="30" required/>
+                <p class="text-danger" v-if="!Persona.Nombre">Requerido</p>
+            </div>
+            <div class="col-sm-6 form-group">
+                <label>Apellidos:</label>
+                <input v-model="Persona.Apellidos" type="text" class="form-control" placeholder="Instroduzca  sus apellidos." maxlength="60" required/>
+                <p class="text-danger" v-if="!Persona.Apellidos">Requerido</p>
+            </div>
+            <div class="col-lg-6 ">
+                <label>Fecha de nacimiento:</label>
+            </div>
+            <div class="col-sm-6 ">
+                <div class="form-group">
+                    <div class='input-group date' id="datetimepicker1">
+                        <input v-model="Persona.FechaNacimiento" type='date' class="form-control" placeHolder="Instroduzca  la fecha de nacimiento." maxlength="10" required />
+                        <span class="input-group-addon" v-on:click="BotonCalendario('#datetimepicker1')">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                    <p class="text-danger" v-if="!Persona.FechaNacimiento">Requerido</p>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6 form-group">
+                <label class="">Genero:</label>
+                <label class="radio-inline" required>
+                    <input v-model="Persona.Genero" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="M"> M
+                </label>
+                <label class="radio-inline">
+                    <input v-model="Persona.Genero" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="F"> F
+                </label>
+                <p class="text-danger" v-if="!Persona.Genero">Requerido</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3 form-group">
+                <label>Telefono 1:</label>
+                <input v-model="Telefono.Numero" type="text" class="form-control" placeholder="Instroduzca  el número." min="10" maxlength="20" required />
+                <p class="text-danger" v-if="!Telefono.Numero">Requerido</p>
+            </div>
+            <div class="col-sm-3 form-group">
+                <label>Tipo de Telefonos 1:</label>
+                <select v-model="Telefono.TipoTelefono" class="form-control" required>
+                    <option value="" selected disabled>Instroduzca  el tipo de telefono.</option>
+                    <option value="Casa">Casa</option>
+                    <option value="Movil">Movil</option>
+                    <option value="Trabajo">Trabajo</option>
+                </select>
+                <p class="text-danger" v-if="!Telefono.TipoTelefono">Requerido</p>
+            </div>
+            <div class="col-sm-3 form-group">
+                <label>Telefono 2:</label>
+                <input v-model="Telefono.Numero2" type="text" class="form-control" placeholder="Instroduzca  el número." min="10" maxlength="20"/>
+                @*<p class="text-danger" v-if="!telefonos.Numero">Requerido</p>*@
+            </div>
+            <div class="col-sm-3 form-group">
+                <label>Tipo de Telefono 2:</label>
+                <select id="telefonoSele" v-model="Telefono.TipoTelefono2" class="form-control" placeholder="Instroduzca  el número.">
+                    <option value="" selected disabled>Instroduzca  el tipo de telefono.</option>
+                    <option value="Casa">Casa</option>
+                    <option value="Movil">Movil</option>
+                    <option value="Trabajo">Trabajo</option>
+                </select>
+                @*<p class="text-danger" v-if="!Persona.Telefonos.TipoTelefono">Requerido</p>*@
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-12 form-group">
+                <label>Correo:</label>
+                <input v-model="Persona.Correo.Email" type="email" class="form-control" placeholder="Instroduzca el email." maxlength="60" />
+                @*<p class="text-danger" v-if="!Persona.Correo.Email">Requerido</p>*@
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4 form-group">
+                <label>País:</label>
+                <input v-model="Persona.Direccion.Pais" type="text" class="form-control" placeholder="Instroduzca el país." maxlength="50" required/>
+                <p class="text-danger" v-if="!Persona.Direccion.Pais">Requerido</p>
+            </div>
+            <div class="col-sm-8 form-group">
+                <label>Dirección:</label>
+                <input v-model="Persona.Direccion.DireccionP" type="text" class="form-control" placeholder="Instroduzca la dirección." maxlength="100" />
+                <p class="text-danger" v-if="!Persona.Direccion.DireccionP">Requerido</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 form-group">
+                <button type="reset" class="btn btn-success btn-block btn-lg " v-on:click="gudardarPersona()" v-bind:disabled="!validarFormularPersona"><strong class="glyphicon glyphicon-floppy-disk btn-group-lg"></strong></button>
+            </div>
+            <div class="col-sm-6 form-group">
+                <a href="VerPersonas" class="btn btn-info btn-block btn-lg"><strong class="glyphicon glyphicon-list-alt btn-group-lg"></strong></a>
+            </div>
+
+        </div>
+    </form>
+</div>
+<script src="~/Scripts/vue.js"></script>
+<script src="~/Scripts/axios.min.js"></script>
+<script src="~/AppScripts/Persona.js"></script>
+

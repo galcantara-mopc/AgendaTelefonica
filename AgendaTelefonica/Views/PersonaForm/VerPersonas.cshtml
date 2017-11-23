@@ -1,0 +1,393 @@
+﻿
+@{
+    ViewBag.Title = "VerPersonas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Registros</h2>
+
+<div id="app" class="row">
+        <div class="row">
+            <div class="col-sm-4">
+                <h4>
+                    <a href="RegistrarPersona" class="alert-link btn btn-success btn-lg ">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </a>
+                </h4>
+            </div>
+            <div class="col-sm-8 form-group">
+                <label>Busqueda:</label>
+                <input v-model="valorBusqueda" type="text" class="form-control" placeHolder="Instroduzca el número de cédula o nombre o apellido a buscar." />
+                
+            </div>
+        </div>
+    
+        <br />
+        <div class="row" v-if="!validarRegistrosPersonas">
+            <div class="col-sm-12">
+                <div class="alert alert-info" role="alert">No hay registros <button type="button" class="close" data-dismiss="alert">&times;</button></div>
+            </div>
+        </div>
+        <div class="row panel" v-if="validarRegistrosPersonas">
+            <div class="col-sm-12" style="overflow-y: auto">
+                <table class="table table-condensed table-responsive table-hover ">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Cédula</th>
+                            <th>Nombre</th>
+                            <th>Apellidos</th>
+                            <th>Genero</th>
+                            <th>Fecha nacimiento</th>
+                            <th>Teléfonos</th>
+                            <th>Correo</th>
+                            <th>País</th>
+                            <th>Dirección</th>
+                            <th>Operaciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(persona, i) in filtroPorGenero">
+                            <td v-text="i+1"></td>
+                            <td v-text="persona.Cedula"></td>
+                            <td v-text="persona.Nombre"></td>
+                            <td v-text="persona.Apellidos"></td>
+                            <td v-text="persona.Genero"></td>
+                            <td v-text="persona.FechaNacimiento"></td>
+                            <td><button class="glyphicon glyphicon-folder-open btn btn-link" v-on:click="MostrarModalP('#modalTelefonos',persona)"></button></td>
+                            <td v-text="persona.Correo"></td>
+                            <td v-text="persona.País"></td>
+                            <td v-text="persona.DireccionP"></td>
+                            <td><button class="glyphicon glyphicon-edit btn btn btn-sm btn-info " v-on:click="MostrarModalP('#myModalEditar',persona)"></button>|<button class="glyphicon glyphicon-trash btn btn-sm btn-danger" v-on:click="MostrarModalP('#pregunta2',persona)"></button>@*|<button class="btn btn-info btn-sm glyphicon glyphicon-list " v-on:click="GenerarReporte(persona)"></button>*@ </td>
+
+                        </tr>
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    <!--Modal Reorte-->
+        @*<div id="modalVistaReporte" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close"  v-on:click="OcultarModal('#modalVistaReporte')">&times;</button>
+                        <h4 class="modal-title"> Vista de reporte:</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row">
+                                    <div class="col-sm-4 form-group">
+                                        <label>Cedula:</label>
+                                        <input class="form-control" type="text" v-model="Persona.Cedula"  readonly/>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label>Nombre:</label>
+                                        <input class="form-control " type="text" v-model="Persona.Nombre" readonly />
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label>Apellidos:</label>
+                                        <input class="form-control" type="text" v-model="Persona.Apellidos" readonly />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="col-sm-4">
+                                    <label>Dirección:</label>
+                                    <input class="form-control" type="text" v-model="Persona.Direccion.Pais" readonly />
+                                </div>
+                                <div class="col-sm-8">
+                                    <label>Dirección:</label>
+                                    <input class="form-control" type="text" v-model="Persona.Direccion.DirecionP" readonly />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+        <!-- Modal editar persona-->
+        <!-- Modal -->
+        <div id="myModalEditar" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" v-on:click="OcultarModal('#myModalEditar')">&times;</button>
+                        <h4 class="modal-title">Editar Informaicón:</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <p>Información principal:</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-5 form-group">
+                                <label>Nombre:</label>
+                                <input type="text" class="form-control" v-model="Persona.Nombre" placeholder="Introduzca el nombre correcto." maxlength="30" autofocus />
+                            </div>
+                            <div class="col-sm-7 form-group">
+                                <label>Apellidos:</label>
+                                <input type="text" class="form-control" v-model="Persona.Apellidos" placeholder="Introduzca los apellidos correcto." maxlength="60"/>
+
+                            </div>
+                            <div class="col-sm-10 form-group">
+                                <label class="">Genero:</label>
+                                <label class="radio-inline " required>
+                                    <input v-model="Persona.Genero" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="M"> M
+                                </label>
+                                <label class="radio-inline">
+                                    <input v-model="Persona.Genero" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="F"> F
+                                </label>
+                            </div>
+                            <div class="col-sm-4 form-group">
+                                <label>Teléfonos:</label>
+                                <button class="btn btn-default glyphicon glyphicon-book form-control" v-on:click="MostrarModal('#modalTelefonos')"></button>
+
+                            </div>
+                            <div class="col-sm-8 form-group">
+                                <label>Correo:</label>
+                                <input type="text" class="form-control" v-model="Persona.Correo.Email" placeholder="Introduzca el correo correcto." maxlength="60" />
+
+                            </div>
+
+                            <div class="col-sm-6 form-group">
+                                <label>País:</label>
+                                <input type="text" class="form-control" v-model="Persona.Direccion.Pais" placeholder="Introduzca el país correcto." maxlength="50"/>
+
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <label>Dirección:</label>
+                                <input type="text" class="form-control" v-model="Persona.Direccion.DireccionP" placeholder="Introduzca la dorección correcto." maxlength="100"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success btn-block" v-on:click="EditarPersona('#myModalEditar')" v-bind:disabled="!validarFormularioEditarPersona">Guardar</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!--Modal mostar telefonos-->
+        <div id="modalTelefonos" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button class="close" v-on:click="OcultarModal('#modalTelefonos')">&times;</button>
+                        <h4 class="modal-title">Teléfonos:</h4>
+                    </div>
+                    <div class="modal-body">
+                        @*<div class="row" v-if="!validarRegistrosTelefonos">
+                            <div class="col-sm-12">
+                                <div class="alert alert-info" role="alert">Esta persona no tiene telefonos registrados.<button class="close" type="button" data-dismiss="alert">&times;</button></div>
+                            </div>
+                        </div>*@
+                        <table class="table table-hover" @*v-if="validarRegistrosTelefonos"*@>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Número</th>
+                                    <th>Tipo</th>
+                                    <th>Operaciones</th>
+                                </tr>
+                            </thead>
+                            <tbody v-for="(telefono, i) in filtroNumeroTelefono">
+                                <tr>
+                                    <td v-text="i+1"></td>
+                                    <td v-text="telefono.Numero"></td>
+                                    <td v-text="telefono.TipoTelefono"></td>
+                                    <td><button class="btn btn-info btn-sm glyphicon glyphicon-edit" v-on:click="MostrarModalT('#modalEditarTelefonos',telefono)"></button>|<button class="btn btn-danger btn-sm glyphicon glyphicon-trash" v-on:click="MostrarModalT('#pregunta1',telefono)"></button>|<button class="btn btn-success btn-sm glyphicon glyphicon-plus" v-on:click="MostrarModalA('#modalAgregarTelefonos',telefono)"></button></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary btn-block" v-on:click="OcultarModal('#modalTelefonos')">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Modal edictar Telefonos-->
+        <div id="modalEditarTelefonos" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button class="close" v-on:click="OcultarModal('#modalEditarTelefonos')">&times;</button>
+                        <h4 class="modal-title">Editar Teléfonos:</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p></p>
+                        <div class="row">
+                            <div class="col-sm-6 form-group">
+                                <label>Teléfono:</label>
+                                <input v-model="Telefono.Numero" type="text" class="form-control" placeholder="Instroduzca  el número." maxlength="20"/>
+                                @*<p class="text-danger" v-if="!telefonos.Numero">Requerido</p>*@
+                            </div>
+                            <div class="col-sm-6 form-group">
+                                <label>Tipo de Teléfonos:</label>
+                                <select v-model="Telefono.TipoTelefono" class="form-control">
+                                    <option value="" selected disabled>Instroduzca  el tipo de telefono.</option>
+                                    <option value="Casa">Casa</option>
+                                    <option value="Movil">Movil</option>
+                                    <option value="Trabajo">Trabajo</option>
+                                </select>
+                                @*<p class="text-danger" v-if="!telefonos.TipoTelefono">Requerido</p>*@
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-block btn-success" v-on:click="EditarTelefono('#modalEditarTelefonos')" v-bind:disabled="!validarFormularTelefono">Guardar cambios</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Modal pregunta si desea eliminar-->
+        <div id="pregunta1" class="modal fade" role="document">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" v-on:click="OcultarModal('#pregunta1')">&times;</button>
+                        <p>Información</p>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="alert alert-danger" role="alert">Desea continuar con la operación?</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <button class="btn btn-danger btn-primary" v-on:click="EliminarTelefono('#pregunta1')">Sí</button>
+                                <button class="btn btn-info btn-primary" v-on:click="OcultarModal('#pregunta')">No</button>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-default btn-primary" v-on:click="OcultarModal('#pregunta1')">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Modal pregunta si desea eliminar Persona-->
+        <div id="pregunta2" class="modal fade" role="document">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" v-on:click="OcultarModal('#pregunta2')">&times;</button>
+                        <p>Información</p>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="alert alert-danger" role="alert">Desea continuar con la operación?</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <button class="btn btn-danger btn-primary" v-on:click="EliminarPersona('#pregunta2')">Sí</button>
+                                <button class="btn btn-info btn-primary" v-on:click="OcultarModal('#pregunta2')">No</button>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-default btn-primary" v-on:click="OcultarModal('#pregunta2')">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Modal agregarTelefono-->
+        <div id="modalAgregarTelefonos" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button class="close" v-on:click="OcultarModal('#modalAgregarTelefonos'), limpiarFormularioAgregarTelefono()">&times;</button>
+                        <h4 class="modal-title">Agregar telefonos:</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formAgregarTelefono" enctype="multipart/form-data" novalidate>
+                            <div class="row">
+                                <div class="col-sm-6 form-group">
+                                    <label>Teléfono:</label>
+                                    <input type="text" class="form-control" placeholder="Introduzca el número." v-model="Telefono.Numero2" maxlength="20"/>
+                                </div>
+                                <div class="col-sm-6 form-group">
+                                    <label>Tipo teléfono:</label>
+                                    <select class="form-control" v-model="Telefono.TipoTelefono2">
+                                        <option value="" selected disabled>Instroduzca  el tipo de telefono.</option>
+                                        <option value="Casa">Casa</option>
+                                        <option value="Movil">Movil</option>
+                                        <option value="Trabajo">Trabajo</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success btn-block" v-on:click="guardarTelefono()" v-bind:disabled="!validarFormularTelefono">Guardar</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!--Modal eliminar persona-->
+        <div id="myModalEliminar" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" v-on:click="OcultarModal('#myModalEliminar')">&times;</button>
+                        <h4 class="modal-title">Eliminiar:</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-lg-12 form-group">
+                                <label> Persona:</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" v-model="Persona.Nombre" disabled />
+                                    <span class="input-group-addon ">
+                                        <button type="submit" class="glyphicon glyphicon-trash btn-link" v-on:click="MostrarModal('#pregunta')"></button>
+                                    </span>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger btn-block r" v-on:click="EliminarPersona('#myModalEliminar')">Eliminar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+<script src="~/Scripts/vue.js"></script>
+<script src="~/Scripts/axios.min.js"></script>
+<script src="~/AppScripts/Persona.js"></script>
