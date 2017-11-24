@@ -23,7 +23,7 @@
             Direccion: {
                 Pais: "",
                 DireccionP:""
-            },
+            }
         },
         Personas: [],
         Telefonos:[],
@@ -75,9 +75,12 @@
                         alert("Registro alamacenado");
                         document.getElementById("cedula").focus();
                         vm.LimpiarFormulario();
-                        return;
+                        
                     }
-                    alert("No se guardó");
+                    else {
+                        alert("No se guardó");
+                    }
+                    
                 })
                 .catch(function (error) {
                     console.log(error);
